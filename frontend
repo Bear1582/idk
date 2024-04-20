@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Basic Forum</title>
+    <style>
+        /* Add your CSS styling here */
+    </style>
+</head>
+<body>
+    <div id="messages"></div>
+    <input type="text" id="messageInput" placeholder="Type your message...">
+    <button onclick="postMessage()">Post</button>
+
+    <script>
+        function postMessage() {
+            let message = document.getElementById("messageInput").value;
+            // Send message to backend for processing and display
+            fetch('/post_message', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: message })
+            }).then(response => {
+                if (response.ok) {
+                    displayMessages();
+                }
+            });
+        }
+
+        function displayMessages() {
+            fetch('/view_messages')
+                .then(response => response.json())
+                .then(data => {
+                    let messagesDiv = document.getElementById("messages");
+                    messagesDiv.innerHTML = '';
+                    data.messages.forEach(message => {
+                        messagesDiv.innerHTML += `<p>${message.message}</p>`;
+                    });
+                });
+        }
+
+        // Display messages when the page loads
+        displayMessages();
+    </script>
+</body>
+</html>
